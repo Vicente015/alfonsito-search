@@ -1,8 +1,8 @@
 {
-  "deno.enable": true,
-  "editor.defaultFormatter": "denoland.vscode-deno",
+  "deno.enable": false,
+  "editor.defaultFormatter": "oven.bun-vscode",
   "eslint.enable": false,
   "[typescript]": {
-    "editor.defaultFormatter": "denoland.vscode-deno"
+    "editor.defaultFormatter": "vscode.typescript-language-features"
   }
 }

@@ -1,6 +1,6 @@
 {
   "name": "alfonsito-search",
-  "version": "1.0.0",
+  "version": "0.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -8,12 +8,14 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "dom-serializer": "^2.0.0",
+    "dompurify": "^3.2.3",
     "htmlparser2": "^10.0.0"
   },
   "devDependencies": {
+    "@types/bun": "^1.2.0",
     "@types/node": "^22.10.7"
   }
 }
