@@ -1,0 +1,19 @@
+{
+  "name": "alfonsito-search",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dom-serializer": "^2.0.0",
+    "htmlparser2": "^10.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.7"
+  }
+}
