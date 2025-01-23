@@ -6,7 +6,7 @@ function parseRegex(htmlString: string) {
   const regex =
     /<tr>\s*<td[^>]*>\d+\.&nbsp;<\/td>\s*<td>\s*<a[^>]*href="([^"]+)"[^>]*>([^<]+)<\/a>\s*<\/td>\s*<\/tr>\s*<tr>\s*<td[^>]*>[^<]*<\/td>\s*<td[^>]*class='result-snippet'[^>]*>(.*?)<\/td>\s*<\/tr>\s*<tr>\s*<td[^>]*>[^<]*<\/td>\s*<td[^>]*>\s*<span[^>]*>([^<]+)<\/span>\s*<\/td>\s*<\/tr>/gim;
 
-  let match;
+  let match: string[] | null;
   while ((match = regex.exec(html)) !== null) {
     //console.debug(match);
     const url = match[1].trim();

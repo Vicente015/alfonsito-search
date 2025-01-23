@@ -9,18 +9,9 @@ const queryDuckDuckGo = async (query: string) => {
     body: `q=${query}`,
     headers: {
       "User-Agent": "",
-      "Accept":
-        "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-      "Accept-Language": "en-US,en;q=0.5",
+      "Accept": "*",
+      "Accept-Language": "en-US,en",
       "Content-Type": "application/x-www-form-urlencoded",
-      "Upgrade-Insecure-Requests": "1",
-      "Sec-Fetch-Dest": "document",
-      "Sec-Fetch-Mode": "navigate",
-      "Sec-Fetch-Site": "same-origin",
-      "Sec-Fetch-User": "?1",
-      "Priority": "u=0, i",
-      "Pragma": "no-cache",
-      "Cache-Control": "no-cache",
     },
   });
   console.timeEnd("fetch");
@@ -40,8 +31,18 @@ const queryDuckDuckGo = async (query: string) => {
 };
 
 const main = async (request: Request) => {
-  const url = new URL(request.url);
-  const query = url.searchParams.get("q");
+  const t0 = performance.now()
+  let parameters: Record<string, string>
+  console.debug(request.headers)
+  if (request.headers.get('content-type')?.includes('form')) {
+    const formData = await request.formData();
+    console.debug('formData', formData)
+    parameters = Object.fromEntries(formData.entries())
+  } else {
+    const url = new URL(request.url);
+    parameters = Object.fromEntries(url.searchParams.entries())
+  }
+  const query = parameters.q
   if (!query) return new Response("No query searchParams", { status: 400 });
   const result = await queryDuckDuckGo(query);
   if (!result) return new Response("No results", { status: 501 });
@@ -55,26 +56,26 @@ const main = async (request: Request) => {
   <title>Alfonsito Search</title>
   <style>
       :root {
-        --flexoki-black: #100F0F;
-        --flexoki-paper: #FFFCF0;
-
-        --flexoki-bg-main: #100F0F;
-        --flexoki-bg-alt: #1C1B1A;
-        --flexoki-border-base: #282726;
-        --flexoki-border-hover: #343331;
-        --flexoki-border-active: #403E3C;
-
-        --flexoki-text-faint: #B7B5AC;
-        --flexoki-text-muted: #6F6E69;
-        --flexoki-text-primary: #100F0F;
-
-        --flexoki-text-error: #D14D41;
-        --flexoki-text-warning: #DA702C;
-        --flexoki-text-success: #879A39;
-
         --flexoki-link: #24837B;
         --flexoki-link-hover: #3AA99F;
-        --flexoki-link-active: #205EA6;
+
+        --flexoki-bg:      #FFFCF0;
+        --flexoki-bg-2:    #F2F0E5;
+        --flexoki-ui:      #E6E4D9;
+        --flexoki-ui-2:    #DAD8CE;
+        --flexoki-ui-3:    #CECDC3;
+        --flexoki-tx-3:    #B7B5AC;
+        --flexoki-tx-2:    #6F6E69;
+        --flexoki-tx:      #100F0F;
+
+        --flexoki-red:     #AF3029;
+        --flexoki-orange:  #BC5215;
+        --flexoki-yellow:  #AD8301;
+        --flexoki-green:   #66800B;
+        --flexoki-cyan:    #24837B;
+        --flexoki-blue:    #205EA6;
+        --flexoki-purple:  #5E409D;
+        --flexoki-magenta: #A02F6F;
       }
       html {
         box-sizing: border-box;
@@ -90,7 +91,7 @@ const main = async (request: Request) => {
       }
 
       body {
-        background-color: var(--flexoki-paper);
+        background-color: var(--flexoki-bg);
       }
 
       main {
@@ -115,7 +116,7 @@ const main = async (request: Request) => {
             color: var(--flexoki-link-hover);
           }
           &:visited {
-            color: var(--flexoki-link-active);
+            color: var(--flexoki-purple);
           }
         }
 
@@ -124,36 +125,69 @@ const main = async (request: Request) => {
         }
         & p {
           margin: 0;
-          color: var(--flexoki-text-primary);
+          color: var(--flexoki-tx);
           font-size: 1rem;
         }
 
         & .result-index {
           margin-right: 1rem;
-          font-family: "Berkeley Mono", monospace;
           font-variant-numeric: tabular-nums;
         }
 
         & .result-url {
-          margin-top: .8rem;
-          color: #BC5215;
+          color: var(--flexoki-orange);
         }
       }
 
-      h2 {
+      .mono {
+        font-family: "Berkeley Mono", monospace;
+      }
 
+      .search-bar {
+        display: flex;
+        justify-items: center;
+        gap: 7px;
+        border-radius: 1.5rem;
+        background-color: var(--flexoki-bg-2);
+        padding: .5rem 1rem;
+
+        & svg {
+          width: 1.2rem;
+        }
+
+        & input {
+          border: none;
+          padding: none;
+          margin: 0;
+          width: 100%;
+          background-color: transparent;
+          outline: none;
+        }
+      }
+
+      .time {
+        font-size: .9rem;
       }
     </style>
 </head>
 <body>
 <main>
+<section>
+<form action="/" method="post">
+<div class="search-bar">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-search"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+<input class='query' type="search" name="q" value="${query}" >
+</div>
+<span class="time">took <span class="mono">${Math.floor(performance.now() - t0)}</span>ms</span>
+</form>
+</section>
 <section id="search-results">
 ${result.results.map((result, index) => `
   <article>
-  <h2><span class="result-index">${index + 1}</span><a href="${result.url}" target="_blank">${result.title}</a></h2>
+  <h2><span class="result-index mono">${index + 1}</span><a rel="nofollow" href="${result.url}" target="_blank">${result.title}</a></h2>
   <div>
   <p>${result.description}</p>
-  <span class="result-url">${new URL(result.url).hostname}</span>
+  <p class="result-url">${new URL(result.url).hostname}</p>
   </div>
   </article>`
   ).join('')}
@@ -169,7 +203,7 @@ ${result.results.map((result, index) => `
     },
   });
 };
-
+/*
 Bun.serve(
   {
     port: 3000,
@@ -177,3 +211,10 @@ Bun.serve(
     fetch: main,
   },
 );
+ */
+
+export default {
+  async fetch(request: Request) {
+    return await main(request)
+  }
+}
