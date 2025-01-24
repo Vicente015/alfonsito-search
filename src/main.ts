@@ -1,13 +1,13 @@
 import parseLocales from "./parseLocales";
 import parseOptions from "./parseOptions";
 import parseRegex from "./parseRegex";
-import { processBang } from "./bangs";
 
 const queryDuckDuckGo = async (query: string) => {
   console.time("fetch");
   const response = await fetch(`https://lite.duckduckgo.com/lite/`, {
     method: "POST",
-    body: `q=${query}`,
+    body: `q=${encodeURIComponent(query)}`,
+    redirect: "manual",
     headers: {
       "User-Agent": "",
       "Accept": "*",
@@ -15,6 +15,12 @@ const queryDuckDuckGo = async (query: string) => {
       "Content-Type": "application/x-www-form-urlencoded",
     },
   });
+
+  if ([301, 302, 303].includes(response.status)) {
+    const redirectUrl = response.headers.get("Location")
+    return { redirect: redirectUrl }
+  }
+
   console.timeEnd("fetch");
 
   const text = await response.text()
@@ -46,15 +52,12 @@ const main = async (request: Request) => {
   const query = parameters.q
   if (!query) return new Response("No query searchParams", { status: 400 })
 
-  const userLanguage = request.headers.get("Accept-Language")?.split(",")[0] || "en-US"
-  const userAgent = request.headers.get("User-Agent") || ""
+  const result = await queryDuckDuckGo(query);
 
-  const bangRedirect = processBang(query, { userLanguage, userAgent })
-  if (bangRedirect) {
-    return Response.redirect(bangRedirect)
+  if (result?.redirect) {
+    return Response.redirect(result.redirect)
   }
 
-  const result = await queryDuckDuckGo(query);
   if (!result) return new Response("No results", { status: 501 });
 
   const html = `
