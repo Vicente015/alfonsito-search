@@ -1,6 +1,7 @@
 import parseLocales from "./parseLocales";
 import parseOptions from "./parseOptions";
 import parseRegex from "./parseRegex";
+import { processBang } from "./bangs";
 
 const queryDuckDuckGo = async (query: string) => {
   console.time("fetch");
@@ -43,7 +44,16 @@ const main = async (request: Request) => {
     parameters = Object.fromEntries(url.searchParams.entries())
   }
   const query = parameters.q
-  if (!query) return new Response("No query searchParams", { status: 400 });
+  if (!query) return new Response("No query searchParams", { status: 400 })
+
+  const userLanguage = request.headers.get("Accept-Language")?.split(",")[0] || "en-US"
+  const userAgent = request.headers.get("User-Agent") || ""
+
+  const bangRedirect = processBang(query, { userLanguage, userAgent })
+  if (bangRedirect) {
+    return Response.redirect(bangRedirect)
+  }
+
   const result = await queryDuckDuckGo(query);
   if (!result) return new Response("No results", { status: 501 });
 
