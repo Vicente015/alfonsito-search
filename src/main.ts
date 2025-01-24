@@ -53,6 +53,7 @@ const main = async (request: Request) => {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light dark">
   <title>Alfonsito Search</title>
   <style>
       :root {
@@ -76,7 +77,31 @@ const main = async (request: Request) => {
         --flexoki-blue:    #205EA6;
         --flexoki-purple:  #5E409D;
         --flexoki-magenta: #A02F6F;
+
       }
+
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --flexoki-bg:      #100F0F;
+          --flexoki-bg-2:    #1C1B1A;
+          --flexoki-ui:      #2D2C2B;
+          --flexoki-ui-2:    #403E3C;
+          --flexoki-ui-3:    #575653;
+          --flexoki-tx-3:    #878580;
+          --flexoki-tx-2:    #A8A59F;
+          --flexoki-tx:      #FFFCF0;
+
+          --flexoki-link:    #3AA99F;
+          --flexoki-red:     #FF6B66;
+          --flexoki-orange:  #FF9D66;
+          --flexoki-yellow:  #FFD580;
+          --flexoki-green:   #99CC66;
+          --flexoki-cyan:    #66CCCC;
+          --flexoki-blue:    #6699FF;
+          --flexoki-purple:  #B399FF;
+          --flexoki-magenta: #FF99CC;
+        }
+
       html {
         box-sizing: border-box;
         -webkit-font-smoothing: antialiased;
