@@ -6,7 +6,6 @@ function parseLocales(htmlString: string) {
 
     let match;
     while ((match = regex.exec(htmlString)) !== null) {
-        console.debug(match)
         const value = match[1].trim();
         const name = match[3].trim();
 

@@ -1,6 +1,6 @@
-# alfonsito-search
+# alfonsito
 
-minimal, fast, web search
+minimal, fast, javascript-free web search
 
 ![Alfonsito fish](.github/alfonsito.jpg)
 
@@ -9,9 +9,10 @@ minimal, fast, web search
 - [X] Fast search result parse
 - [X] Format, normalize, strip titles and descriptions
 - [X] Search bar, filters, language
+- [X] Minimal good-looking styles
+- [X] Research accesilibity and font disambiguation options specially in url
 - [ ] Pagination
-- [ ] Minimal good-looking styles
-- [ ] Bangs autocomplete?
 - [ ] Bundle, minify output
 - [ ] Header with ASCII fish? and description
-- [ ] Research accesilibity and font disambiguation options specially in url
+- [ ] Homepage
+- [ ] No results page

@@ -103,7 +103,8 @@ const main = async (request: Request) => {
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
         text-rendering: optimizeLegibility;
-        font-family: "Inter", system-ui;
+        font-family: Inter, 'Adwaita Sans', Roboto, 'Helvetica Neue', Arial, Nimbus Sans, system-ui, sans-serif;
+        font-feature-settings: "ss01", "ss02", "ss03", "case", "tnum";
         font-size: .9rem;
       }
 
@@ -123,7 +124,7 @@ const main = async (request: Request) => {
       }
 
       article {
-        margin-top: 1rem;
+        margin-bottom: 1.2rem;
 
         & h2 {
           margin: 0;
@@ -156,7 +157,7 @@ const main = async (request: Request) => {
         }
 
         & .result-index {
-          color: var(--flexoki-tx-2);
+          color: black;
           margin-right: 1rem;
           font-variant-numeric: tabular-nums;
         }
@@ -168,7 +169,15 @@ const main = async (request: Request) => {
 
 
       .mono {
-        font-family: "Berkeley Mono", monospace;
+        font-family: 'Berkeley Mono', 'Fira Code', 'JetBrains Mono', ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, Consolas, 'DejaVu Sans Mono', monospace;
+      }
+
+      .timestamp {
+        color: var(--flexoki-red);
+      }
+
+      b {
+        font-weight: 600;
       }
 
       .search-bar {
@@ -176,7 +185,7 @@ const main = async (request: Request) => {
         justify-items: center;
         gap: 7px;
         border-radius: 1.5rem;
-        border: 1px solid var(--flexoki-ui-2);
+        border: 1px solid var(--flexoki-ui);
         background-color: var(--flexoki-bg-2);
         padding: .5rem 1.2rem;
 
@@ -203,6 +212,14 @@ const main = async (request: Request) => {
           outline: none;
           font-size: 1rem;
         }
+
+        &:hover {
+          border-color: var(--flexoki-ui-2);
+        }
+
+        &:focus-within {
+          border-color: var(--flexoki-ui-3);
+        }
       }
 
       .time {
@@ -227,9 +244,19 @@ const main = async (request: Request) => {
         display: flex;
         flex-direction: row;
         align-items: center;
+        margin-bottom: 1.4rem;
 
         & .search-selects {
           margin-left: auto;
+          & select {
+            &:hover {
+              border-color: var(--flexoki-ui-2);
+            }
+
+            &:focus-within {
+              border-color: var(--flexoki-ui-3);
+            }
+          }
         }
       }
     </style>
@@ -267,7 +294,7 @@ ${result.results.map((result, index) => `
   <article>
   <h2><span class="result-index mono">${index + 1}</span><a rel="nofollow" href="${result.url}" target="_blank">${result.title}</a></h2>
   <div>
-  <p>${result.description}</p>
+  <p>${result.date ? `<span class="timestamp">${new Date(result.date).toISOString().split('T')[0]}</span> — ` : ''}${result.description}</p>
   <p class="result-url">${new URL(result.url).hostname}</p>
   </div>
   </article>`
