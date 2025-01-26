@@ -103,7 +103,7 @@ const main = async (request: Request) => {
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
         text-rendering: optimizeLegibility;
-        font-family: Inter, 'Adwaita Sans', Roboto, 'Helvetica Neue', Arial, Nimbus Sans, system-ui, sans-serif;
+        font-family: Inter, 'Adwaita Sans', system-ui, sans-serif;
         font-feature-settings: "ss01", "ss02", "ss03", "case", "tnum";
         font-size: .9rem;
       }
