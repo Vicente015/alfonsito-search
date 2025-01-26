@@ -7,8 +7,9 @@ minimal, fast, web search
 # Roadmap
 
 - [X] Fast search result parse
-- [ ] Format, normalize, strip titles and descriptions
-- [ ] Search bar, filters, language, paging
+- [X] Format, normalize, strip titles and descriptions
+- [X] Search bar, filters, language
+- [ ] Pagination
 - [ ] Minimal good-looking styles
 - [ ] Bangs autocomplete?
 - [ ] Bundle, minify output

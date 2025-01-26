@@ -2,63 +2,70 @@ import parseLocales from "./parseLocales";
 import parseOptions from "./parseOptions";
 import parseRegex from "./parseRegex";
 
-const queryDuckDuckGo = async (query: string) => {
+type Parameters = Partial<{
+  s: string
+  nextParams: string
+  v: string
+  o: "json"
+  dc: string
+  api: "d.js"
+  vqd: string
+  kl: string
+  df: string
+}> & {
+  q: string
+}
+
+const queryDuckDuckGo = async (parameters: Parameters, request: Request) => {
+  const searchParams = new URLSearchParams(parameters)
+
   console.time("fetch");
   const response = await fetch(`https://lite.duckduckgo.com/lite/`, {
     method: "POST",
-    body: `q=${encodeURIComponent(query)}`,
+    body: searchParams.toString(),
     redirect: "manual",
     headers: {
-      "User-Agent": "",
-      "Accept": "*",
-      "Accept-Language": "en-US,en",
+      ...request.headers,
+      "host": "lite.duckduckgo.com",
+      "origin": "https://lite.duckduckgo.com",
+      "referer": "https://lite.duckduckgo.com/",
       "Content-Type": "application/x-www-form-urlencoded",
     },
   });
+  console.timeEnd("fetch");
 
   if ([301, 302, 303].includes(response.status)) {
     const redirectUrl = response.headers.get("Location")
     return { redirect: redirectUrl }
   }
 
-  console.timeEnd("fetch");
-
   const text = await response.text()
-  console.time("parse");
   const results = parseRegex(text);
-  console.timeEnd("parse");
-  console.time("parse2");
   const localeOptions = parseLocales(text)
-  console.timeEnd("parse2");
-  console.time("parse3");
   const options = parseOptions(text)
-  console.timeEnd("parse3");
 
   return { results, localeOptions, options: [...options] };
 };
 
 const main = async (request: Request) => {
   const t0 = performance.now()
-  let parameters: Record<string, string>
-  console.debug(request.headers)
+  let parameters: Parameters
   if (request.headers.get('content-type')?.includes('form')) {
     const formData = await request.formData();
-    console.debug('formData', formData)
-    parameters = Object.fromEntries(formData.entries())
+    parameters = Object.fromEntries(formData.entries()) as unknown as Parameters
   } else {
     const url = new URL(request.url);
-    parameters = Object.fromEntries(url.searchParams.entries())
+    parameters = Object.fromEntries(url.searchParams.entries()) as unknown as Parameters
   }
   const query = parameters.q
   if (!query) return new Response("No query searchParams", { status: 400 })
 
-  const result = await queryDuckDuckGo(query);
+  const result = await queryDuckDuckGo(parameters, request);
 
-  if (result?.redirect) {
+  if (result.redirect) {
     return Response.redirect(result.redirect)
   }
-
-  if (!result) return new Response("No results", { status: 501 });
+  if (!result.results) return new Response("No results", { status: 501 });
 
   const html = `
 <!DOCTYPE html>
@@ -66,54 +73,30 @@ const main = async (request: Request) => {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="color-scheme" content="light dark">
   <title>Alfonsito Search</title>
   <style>
       :root {
         --flexoki-link: #24837B;
         --flexoki-link-hover: #3AA99F;
 
-        --flexoki-bg:      #FFFCF0;
-        --flexoki-bg-2:    #F2F0E5;
-        --flexoki-ui:      #E6E4D9;
-        --flexoki-ui-2:    #DAD8CE;
-        --flexoki-ui-3:    #CECDC3;
-        --flexoki-tx-3:    #B7B5AC;
-        --flexoki-tx-2:    #6F6E69;
-        --flexoki-tx:      #100F0F;
+        --flexoki-bg: #FFFCF0;
+        --flexoki-bg-2: #F2F0E5;
+        --flexoki-ui: #E6E4D9;
+        --flexoki-ui-2: #DAD8CE;
+        --flexoki-ui-3: #CECDC3;
+        --flexoki-tx-3: #B7B5AC;
+        --flexoki-tx-2: #6F6E69;
+        --flexoki-tx: #100F0F;
 
-        --flexoki-red:     #AF3029;
-        --flexoki-orange:  #BC5215;
-        --flexoki-yellow:  #AD8301;
-        --flexoki-green:   #66800B;
-        --flexoki-cyan:    #24837B;
-        --flexoki-blue:    #205EA6;
-        --flexoki-purple:  #5E409D;
+        --flexoki-red: #AF3029;
+        --flexoki-orange: #BC5215;
+        --flexoki-yellow: #AD8301;
+        --flexoki-green: #66800B;
+        --flexoki-cyan: #24837B;
+        --flexoki-blue: #205EA6;
+        --flexoki-purple: #5E409D;
         --flexoki-magenta: #A02F6F;
-
       }
-
-      @media (prefers-color-scheme: dark) {
-        :root {
-          --flexoki-bg:      #100F0F;
-          --flexoki-bg-2:    #1C1B1A;
-          --flexoki-ui:      #2D2C2B;
-          --flexoki-ui-2:    #403E3C;
-          --flexoki-ui-3:    #575653;
-          --flexoki-tx-3:    #878580;
-          --flexoki-tx-2:    #A8A59F;
-          --flexoki-tx:      #FFFCF0;
-
-          --flexoki-link:    #3AA99F;
-          --flexoki-red:     #FF6B66;
-          --flexoki-orange:  #FF9D66;
-          --flexoki-yellow:  #FFD580;
-          --flexoki-green:   #99CC66;
-          --flexoki-cyan:    #66CCCC;
-          --flexoki-blue:    #6699FF;
-          --flexoki-purple:  #B399FF;
-          --flexoki-magenta: #FF99CC;
-        }
 
       html {
         box-sizing: border-box;
@@ -124,17 +107,19 @@ const main = async (request: Request) => {
         font-size: .9rem;
       }
 
-      p,h2 {
+      p,
+      h2 {
         line-height: calc(1ex / 0.32);
       }
 
       body {
+        max-width: 80ch;
+        margin: 0 auto;
         background-color: var(--flexoki-bg);
       }
 
       main {
-        max-width: 80ch;
-        margin: auto;
+        padding: 1rem;
       }
 
       article {
@@ -150,9 +135,11 @@ const main = async (request: Request) => {
         & a {
           color: var(--flexoki-link);
           text-decoration: none;
+
           &:hover {
             color: var(--flexoki-link-hover);
           }
+
           &:visited {
             color: var(--flexoki-purple);
           }
@@ -161,6 +148,7 @@ const main = async (request: Request) => {
         & div {
           margin-left: 1.7rem;
         }
+
         & p {
           margin: 0;
           color: var(--flexoki-tx);
@@ -168,6 +156,7 @@ const main = async (request: Request) => {
         }
 
         & .result-index {
+          color: var(--flexoki-tx-2);
           margin-right: 1rem;
           font-variant-numeric: tabular-nums;
         }
@@ -176,6 +165,7 @@ const main = async (request: Request) => {
           color: var(--flexoki-orange);
         }
       }
+
 
       .mono {
         font-family: "Berkeley Mono", monospace;
@@ -186,10 +176,20 @@ const main = async (request: Request) => {
         justify-items: center;
         gap: 7px;
         border-radius: 1.5rem;
+        border: 1px solid var(--flexoki-ui-2);
         background-color: var(--flexoki-bg-2);
-        padding: .5rem 1rem;
+        padding: .5rem 1.2rem;
+
+        & button {
+          margin: 0;
+          padding: 0;
+          outline: none;
+          border: 0;
+          background: transparent;
+        }
 
         & svg {
+          color: var(--flexoki-tx);
           width: 1.2rem;
         }
 
@@ -198,26 +198,69 @@ const main = async (request: Request) => {
           padding: none;
           margin: 0;
           width: 100%;
+          color: var(--flexoki-tx);
           background-color: transparent;
           outline: none;
+          font-size: 1rem;
         }
       }
 
       .time {
         font-size: .9rem;
+        color: var(--flexoki-tx-2);
+      }
+
+      select {
+        border: 0;
+        margin: 0;
+        padding: 0;
+        outline: none;
+        border-radius: .5rem;
+        padding: .4rem;
+        color: var(--flexoki-tx);
+        background-color: var(--flexoki-bg-2);
+        border: 1px solid var(--flexoki-ui);
+      }
+
+      .search-footer {
+        margin-top: .4rem;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+
+        & .search-selects {
+          margin-left: auto;
+        }
       }
     </style>
 </head>
 <body>
 <main>
 <section>
-<form action="/" method="post">
-<div class="search-bar">
-<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-search"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-<input class='query' type="search" name="q" value="${query}" >
-</div>
-<span class="time">took <span class="mono">${Math.floor(performance.now() - t0)}</span>ms</span>
-</form>
+  <form action="/" method="post">
+    <div class="search-bar">
+      <input class='query' type="search" name="q" value="${query}">
+      <button type="submit">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+          class="lucide lucide-search">
+          <circle cx="11" cy="11" r="8" />
+          <path d="m21 21-4.3-4.3" />
+        </svg>
+      </button>
+    </div>
+    <div class="search-footer">
+      <span class="time">took <span class="mono">${Math.floor(performance.now() - t0)}</span>ms</span>
+      <div class="search-selects">
+        <select class="submit" name="kl">
+        ${result.localeOptions.locales.map((option) => `<option value="${option.value}" ${parameters.kl === option.value ? "selected='true'" : " "}>${option.name}</option>`).join('')}
+        </select>
+        <select name="df">
+        ${result.localeOptions.times.map((option) => `<option value="${option.value}" ${parameters.df === option.value ? "selected='true'" : " "}>${option.name}</option>`).join('')}
+        </select>
+      </div>
+    </div>
+  </form>
 </section>
 <section id="search-results">
 ${result.results.map((result, index) => `
@@ -241,15 +284,6 @@ ${result.results.map((result, index) => `
     },
   });
 };
-/*
-Bun.serve(
-  {
-    port: 3000,
-    // hostname: "0.0.0.0",
-    fetch: main,
-  },
-);
- */
 
 export default {
   async fetch(request: Request) {
