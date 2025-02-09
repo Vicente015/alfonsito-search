@@ -18,6 +18,4 @@
 - [ ] Header with ASCII fish? and description
 - [ ] No results page
 
---- 
-
 [^1]: Name of a [Canarian fish](https://www3.gobiernodecanarias.org/medusa/mediateca/ecoescuela/?attachment_id=7054)
