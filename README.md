@@ -1,9 +1,10 @@
-## *alfonsito*
+## *alfonsito* <img src="https://github.com/user-attachments/assets/38b8b3a9-b1bd-48e7-aba9-abe417eb99c3" height="20px"></img> 
 
 *Alfonsito[^1]* is a minimal, fast, javascript-free web search page.
 Based on [DuckDuckGo Lite](https://lite.duckduckgo.com/lite).
+Needs [Inter font](https://rsms.me/inter/) installed on your system to look good, it doesn't load external fonts to keep it fast.
 
-![Alfonsito fish](.github/alfonsito.jpg)
+<img src="https://github.com/user-attachments/assets/8b664e94-25a0-4c79-90bb-769d2eb2182a" height="500px"></img>
 
 ### Public instance
 There is a public instance hosted in Cloudflare workers, but it's often being blocked from DuckDuckGo.
