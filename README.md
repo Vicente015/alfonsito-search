@@ -32,7 +32,7 @@ services:
         image: ghcr.io/vicente015/alfonsito:latest
 ```
 
-### Roadmap
+## Roadmap
 
 - [X] Fast search result parse
 - [X] Format, normalize, strip titles and descriptions
