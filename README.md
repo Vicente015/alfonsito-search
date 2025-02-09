@@ -7,9 +7,9 @@ Needs [Inter font](https://rsms.me/inter/) installed on your system to look good
 <img src="https://github.com/user-attachments/assets/8b664e94-25a0-4c79-90bb-769d2eb2182a" height="500px"></img>
 
 ### Public instance
-There is a public instance hosted in Cloudflare workers, but it's often being blocked from DuckDuckGo.
+There is a public instance, but it's often being blocked from DuckDuckGo.
 
-[Public Instance](https://alfonsito.vicente015.workers.dev/)
+[Public Instance](https://alfonsito.vicente015.dev/)
 
 ### Self-host
 Runs on port 3000
