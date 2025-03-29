@@ -4,7 +4,7 @@
 Based on [DuckDuckGo Lite](https://lite.duckduckgo.com/lite).
 Needs [Inter font](https://rsms.me/inter/) installed on your system to look good, it doesn't load external fonts to keep it fast.
 
-<img src="https://github.com/user-attachments/assets/8b664e94-25a0-4c79-90bb-769d2eb2182a" height="500px"></img>
+![image](https://github.com/user-attachments/assets/dc8f6523-9047-4c6e-9e9e-f05caa07e5be)
 
 ### Public instance
 There is a public instance, but it's often being blocked from DuckDuckGo.
