@@ -12,6 +12,7 @@ type Parameters = Partial<{
   vqd: string
   kl: string
   df: string
+  dark: "true"
 }> & {
   q: string
 }
@@ -47,7 +48,7 @@ const queryDuckDuckGo = async (parameters: Parameters, request: Request) => {
   return { results, localeOptions, options: [...options] };
 };
 
-const searchPage = async (request: Request, parameters: Parameters) => {
+const searchPage = async (request: Request, parameters: Parameters, darkMode: boolean) => {
   const t0 = performance.now()
   const query = parameters.q
 
@@ -60,7 +61,7 @@ const searchPage = async (request: Request, parameters: Parameters) => {
 
   const html = `
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="${darkMode ? "dark" : ""}">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -176,6 +177,13 @@ Bun.serve({
       })
     }
 
-    return searchPage(request, parameters)
+    let darkMode = false
+    if (parameters.dark === "true") {
+      darkMode = true
+    }
+    // ? Remove unsupported parameter from ddg query
+    delete parameters.dark
+
+    return searchPage(request, parameters, darkMode)
   }
 })

@@ -19,6 +19,7 @@
   --flexoki-blue: #205EA6;
   --flexoki-purple: #5E409D;
   --flexoki-magenta: #A02F6F;
+  --color-pure: black;
 }
 
 html {
@@ -29,6 +30,27 @@ html {
   font-family: Inter, 'Adwaita Sans', system-ui, sans-serif;
   font-feature-settings: "ss01", "ss02", "ss03", "case", "tnum";
   font-size: .9rem;
+}
+
+html.dark {
+  --flexoki-bg:      #100F0F;
+  --flexoki-bg-2:    #1C1B1A;
+  --flexoki-ui:      #2D2C2B;
+  --flexoki-ui-2:    #403E3C;
+  --flexoki-ui-3:    #575653;
+  --flexoki-tx-3:    #878580;
+  --flexoki-tx-2:    #A8A59F;
+  --flexoki-tx:      #FFFCF0;
+  --flexoki-link:    #3AA99F;
+  --flexoki-red:     #FF6B66;
+  --flexoki-orange:  #FF9D66;
+  --flexoki-yellow:  #FFD580;
+  --flexoki-green:   #99CC66;
+  --flexoki-cyan:    #66CCCC;
+  --flexoki-blue:    #6699FF;
+  --flexoki-purple:  #B399FF;
+  --flexoki-magenta: #FF99CC;
+  --color-pure: white;
 }
 
 p,
@@ -80,7 +102,7 @@ article {
   }
 
   & .result-index {
-    color: black;
+    color: var(--color-pure);
     margin-right: 1rem;
     font-variant-numeric: tabular-nums;
   }
