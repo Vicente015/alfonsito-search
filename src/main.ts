@@ -74,6 +74,7 @@ const searchPage = async (request: Request, parameters: Parameters, darkMode: bo
   <form action="/" method="post">
     <div class="search-bar">
       <input class='query' type="search" name="q" value="${query}">
+      <input type="hidden" name="dark" value="${darkMode ? "true" : ""}">
       <button type="submit">
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
           stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
